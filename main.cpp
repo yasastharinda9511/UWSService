@@ -34,7 +34,7 @@ int main() {
 
     std::thread sever_thread([&]() {
         student_service.start(3000);
-        student_service.add_route(HttpMethods::GET, "/getStudent",
+        student_service.add_route(HttpMethods::POST, "/addStudent",
                                   Controllers::StudentController<false>::on_add_request)
                 ->add_route(HttpMethods::GET, "/getAllStudents",
                             Controllers::StudentController<false>::get_all_students);

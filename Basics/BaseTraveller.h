@@ -19,7 +19,7 @@ namespace Basics {
         explicit BaseTraveller(Constants::Events event):_event(event){}
         template<typename T>
         BaseTraveller* add_data(const std::string& key, const T& data){
-            _data_map[key].emplace_back(data);
+            _data_map[key].emplace_back(std::move(data));
             return this;
         }
 

@@ -23,7 +23,7 @@ namespace Controllers {
             auto* dt = new Basics::DataTraveller<ssl>(res, Constants::Events::ADD_STUDENT);
 
             res->onData([dt](std::string_view data, bool last){
-                Student* s = on_data<Student>(data, last);
+                Student s = on_data<Student>(data, last);
                 dt->add_data("students", s);
                 EventBus::EventBus<Basics::BaseTraveller>::get_event_bus()->publish_async(Constants::EventBusStreams::DB_STREAM, *dt);
             });

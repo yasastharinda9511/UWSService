@@ -17,11 +17,11 @@ namespace Connectors::Handlers {
     public:
         void handle(Basics::BaseTraveller& dataTraveller ,  pqxx::connection* conn, const Stores:: SQLStore& sql_store) override {
 
-            const std::vector<Student*>& students = dataTraveller.get_typed_vector<Student*>("students");
+            const std::vector<Student>& students = dataTraveller.get_typed_vector<Student>("students");
 
-            Student* student = students.front();
+            Student student = students.front();
             std::string sql = sql_store.get_query(Constants::SQLQueryTypes::INSERT_STUDENT_QUERY);
-            std::string formatted_query = fmt::format( sql, student->_student_name,  student->_age, student->_email, student->_stream);
+            std::string formatted_query = fmt::format( sql, student._student_name,  student._age, student._email, student._stream);
 
             std::cout << formatted_query << std::endl;
             if (!conn->is_open()) {
@@ -39,9 +39,9 @@ namespace Connectors::Handlers {
                     auto email = row["email"].as<std::string>();
                     auto stream = row["stream"].as<std::string>();
 
-                    auto* response = new Student(id, student_name, email,age, stream);
+                    Student response_student(id, student_name, email,age, stream);
 
-                    dataTraveller.add_data("response_data", response);
+                    dataTraveller.add_data("response_data", response_student);
 
                 }
                 txn.commit();

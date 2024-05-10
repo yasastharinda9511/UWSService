@@ -14,15 +14,13 @@ namespace Finalizer:: ResponseMapHandlers{
     public:
         std::string handel_response(Basics::BaseTraveller& data_traveller) override {
 
-            const std::vector<Student*>& students = data_traveller.get_typed_vector<Student*>("response_data");
+            const std::vector<Student>& students = data_traveller.get_typed_vector<Student>("response_data");
             std::string json_response = "" ;
             for(auto& student : students){
 
-                std::cout << student->toJSON() << std::endl;
-                json_response +=student->toJSON();
+                std::cout << student.toJSON() << std::endl;
+                json_response +=student.toJSON();
             }
-
-
             return json_response;
         }
     };

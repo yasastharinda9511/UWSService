@@ -27,7 +27,6 @@ bool Connectors::DBConnector::connect() {
     } catch (const std::exception& e) {
         return false;
     }
-    return false;
 }
 
 bool Connectors::DBConnector::disconnect() {

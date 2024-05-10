@@ -12,16 +12,15 @@ namespace Controllers {
     class BaseController {
     public:
         template<typename T>
-        static T* on_data(std::string_view data, bool last) {
+        static T on_data(std::string_view data, bool last) {
             if (last) {
                 try {
                     auto json = nlohmann::json::parse(data);
-                    T* t  = new T(json);
-                    nlohmann::json responseJSON = t->toJSON();
+                    T t(json);
                     return t;
 
                 } catch (const std::exception &e) {
-                    return nullptr;
+                    throw std::runtime_error(std::string("JSON parsing failed: ") + e.what());
                 }
             }
         }

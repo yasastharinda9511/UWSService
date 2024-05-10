@@ -32,9 +32,9 @@ namespace Connectors::Handlers {
                     auto email = row["email"].as<std::string>();
                     auto stream = row["stream"].as<std::string>();
 
-                    auto* response = new Student(id, student_name, email,age, stream);
+                    Student student(id, student_name, email,age, stream);
 
-                    dataTraveller.add_data("response_data", response);
+                    dataTraveller.add_data("response_data", student);
 
                 }
                 txn.commit();
