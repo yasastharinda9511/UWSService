@@ -1,0 +1,13 @@
+# Ignore build directory
+/build/
+
+# Ignore CMake build artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+Testing/
+cmake-build-debug/
+cmake-build-debug-system
+

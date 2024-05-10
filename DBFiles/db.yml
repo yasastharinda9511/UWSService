@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: my_database
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    volumes:
+      - ./DBScript.sql:/docker-entrypoint-initdb.d/DBScript.sql
+    ports:
+      - "5432:5432"
