@@ -11,7 +11,12 @@
 #include "Connector/DBConnector/DBConnector.h"
 #include "DataFinalizer/DataFinalizer.h"
 #include "Constants/event_bus.h"
+#include "Basics/AsynExecutor/ExtendedPromise.h"
+#include "Basics/AsynExecutor/AsyncChain.h"
 
+void print_number(int num) {
+    std::cout << "Number: " << num << std::endl;
+}
 
 int main() {
 
@@ -41,6 +46,19 @@ int main() {
         loop = uWS::Loop::get();
         loop->run();
     });
+
+    Basics::Async::ASyncChain<int> chain;  // Start the chain with an initial value of 100
+
+    auto resultChain = chain.start([](int x) { return x + 100; } , 1000)
+            .then([](int x){return  x + 100 ;})
+            .then([](int x){ return x*x;});
+    // Get the final result
+    try{
+        std::cout << "Result: " << resultChain.get() << std::endl;  // Should output 350.
+    }catch (Basics::Async::AsyncChainException& e){
+        std::cout << e.what() << std::endl;
+    }
+
 
     sever_thread.join();
 

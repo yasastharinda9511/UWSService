@@ -40,6 +40,9 @@ add_executable(UWSService main.cpp
         Connector/DBConnector/DbScriptHandlers/GetAllStudentsHandler.h
         DataFinalizer/DataFinalizeHandlers/GetAllStudentsResponseHandler.h
         Constants/event_bus.h
+        Basics/AsynExecutor/ExtendedPromise.h
+        Basics/AsynExecutor/AsyncChain.h
+        Basics/AsynExecutor/AsyncExceptions/AsyncException.h
 )
 
 target_link_libraries(UWSService uSockets
