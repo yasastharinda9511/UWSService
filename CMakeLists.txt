@@ -8,6 +8,9 @@ include_directories(
         /home/yasas/CLionProjects/3rd_party_libs/include/uWebSockets
 )
 
+enable_testing()  # Enables integration with CTest
+add_subdirectory(test)
+
 link_directories(/home/yasas/CLionProjects/3rd_party_libs/libs
         /home/yasas/CLionProjects/3rd_party_libs/lib64)
 
@@ -43,6 +46,7 @@ add_executable(UWSService main.cpp
         Basics/AsynExecutor/ExtendedPromise.h
         Basics/AsynExecutor/AsyncChain.h
         Basics/AsynExecutor/AsyncExceptions/AsyncException.h
+        Basics/Factory/Factories.h
 )
 
 target_link_libraries(UWSService uSockets

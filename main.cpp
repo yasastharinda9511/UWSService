@@ -13,6 +13,7 @@
 #include "Constants/event_bus.h"
 #include "Basics/AsynExecutor/ExtendedPromise.h"
 #include "Basics/AsynExecutor/AsyncChain.h"
+#include "Basics/Factory/Factories.h"
 
 void print_number(int num) {
     std::cout << "Number: " << num << std::endl;
@@ -59,7 +60,10 @@ int main() {
         std::cout << e.what() << std::endl;
     }
 
+    Basics::Factories::Factory<Basics::BaseTraveller> base_traveller_message_factory(10 , Constants::Events::ADD_STUDENT);
+    Basics::BaseTraveller& bt =  base_traveller_message_factory.create(Constants::Events::ADD_STUDENT);
 
+    std::cout << "event is " <<   static_cast<int>(bt.get_event())<< std::endl;
     sever_thread.join();
 
 }
