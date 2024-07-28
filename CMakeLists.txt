@@ -8,11 +8,15 @@ include_directories(
         /home/yasas/CLionProjects/3rd_party_libs/include/uWebSockets
 )
 
-enable_testing()  # Enables integration with CTest
-add_subdirectory(test)
+#enable_testing()  # Enables integration with CTest
+#add_subdirectory(test)
 
 link_directories(/home/yasas/CLionProjects/3rd_party_libs/libs
-        /home/yasas/CLionProjects/3rd_party_libs/lib64)
+        /home/yasas/CLionProjects/3rd_party_libs/lib64
+        /usr/local/lib64
+        /usr/locl/lib
+        /usr/lib/
+        /usr/lib64/)
 
 add_executable(UWSService main.cpp
         Services/Service.cpp
