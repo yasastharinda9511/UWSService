@@ -54,6 +54,7 @@ add_executable(UWSService main.cpp
         Basics/AsynExecutor/AsyncExecutor.h
         Basics/AsynExecutor/Task.h
         Basics/AsynExecutor/LockFreeQueue/LockFreeQueue.h
+        Basics/AsynExecutor/TaskExecutors.h
 )
 
 target_link_libraries(UWSService uSockets

@@ -28,8 +28,6 @@ namespace async{
                 std::thread([this, value]() {
                     _on_success(value);
                 }).detach();
-            }else{
-                std::cout << "anull" << std::endl;
             }
         }
         void fail(std::exception ex){
@@ -37,10 +35,6 @@ namespace async{
             std::thread([this, &ex]() {
                 _on_fail(ex);
             }).detach();
-
-        }
-
-        void set_exception(std::exception_ptr exceptionPtr) {
 
         }
 

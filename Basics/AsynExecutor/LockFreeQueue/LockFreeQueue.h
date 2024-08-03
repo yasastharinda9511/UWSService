@@ -85,8 +85,6 @@ namespace async::lock_free {
                     }
                 }
             }
-
-
         }
 
     private:
