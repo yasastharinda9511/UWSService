@@ -11,7 +11,7 @@
 int calculate_factorial(int n) {
     if (n < 0) throw std::invalid_argument("Negative number not allowed");
     if (n == 0 || n == 1) return 1;
-    return n ;
+    return n*n ;
 }
 
 TEST(ExtendedPromise , basic) {
@@ -22,9 +22,11 @@ TEST(ExtendedPromise , basic) {
 
     promise->on_success([](int x){
         std::cout << "result is " << x << std::endl;
-    })->on_fail([](const std::exception& ex){
-        std::cout << "result is " << ex.what() << std::endl;
+    })->on_fail([](const std::exception_ptr ex){
+        std::cout << "result is " << std::endl;
     });
-    asyncExecutor.async_executor.join();
+
+    std::cout << promise->_future.get() << std::endl;
+
 }
 

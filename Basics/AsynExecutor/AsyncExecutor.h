@@ -41,7 +41,7 @@ namespace async{
                     ReturnType value = func(args...);
                     promise->complete(value);
                 }catch(...){
-                    promise->set_exception(std::current_exception());
+                    promise->fail(std::current_exception());
                 }
             });
 

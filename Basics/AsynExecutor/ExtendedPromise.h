@@ -17,7 +17,7 @@ namespace async{
             return this;
         }
 
-        ExtendedPromise<T>*  on_fail(std::function<void(const std::exception&)> callback) {
+        ExtendedPromise<T>*  on_fail(std::function<void(const std::exception_ptr)> callback) {
             _on_fail= std::move(callback);
             return this;
         }
@@ -30,7 +30,7 @@ namespace async{
                 }).detach();
             }
         }
-        void fail(std::exception ex){
+        void fail(std::exception_ptr ex){
             _promise.set_exception(ex);
             std::thread([this, &ex]() {
                 _on_fail(ex);
@@ -41,6 +41,6 @@ namespace async{
         std::promise<T> _promise;
         std::future<T> _future;
         std::function<void(const T&)> _on_success;
-        std::function<void(const std::exception&)> _on_fail;
+        std::function<void(const std::exception_ptr)> _on_fail;
     };
 }
