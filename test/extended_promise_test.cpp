@@ -8,21 +8,19 @@
 #include "../Basics/AsynExecutor/ExtendedPromise.h"
 #include "../Basics/AsynExecutor/AsyncExecutor.h"
 
-int calculate_factorial(int n) {
-    if (n < 0) throw std::invalid_argument("Negative number not allowed");
-    if (n == 0 || n == 1) return 1;
+int square(int n) {
     return n*n ;
 }
 
 void print(int x){
-    std::cout << "result is " << x << std::endl;
+    ASSERT_EQ(x , 10000);
 }
 
 TEST(ExtendedPromise , basic) {
 
     async::AsyncExecutor& executor = async::AsyncExecutor::create();
 
-    auto promise = executor.async_executor_submit(calculate_factorial, 100);
+    auto promise = executor.async_executor_submit(square, 100);
 
     promise.on_success([](int x){
         print(x);
@@ -31,6 +29,6 @@ TEST(ExtendedPromise , basic) {
     });
 
     std::cout << promise._future.get() << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 }
 
