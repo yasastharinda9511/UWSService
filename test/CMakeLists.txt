@@ -10,5 +10,7 @@ link_directories(/home/yasas/CLionProjects/3rd_party_libs/libs
 
 
 add_executable(tests test_main.cpp
-        FactorTest.h)
+        FactorTest.h
+        extended_promise_test.cpp
+        lock_free_test.cpp)
 target_link_libraries(tests gtest)

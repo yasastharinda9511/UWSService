@@ -1,22 +1,23 @@
 //
 // Created by yasas on 5/11/24.
 //
+#pragma  once
 
 #include <future>
 
-namespace Basics::ExtendedPromise{
+namespace async{
 
     template<typename T>
     class ExtendedPromise {
 
     public:
         ExtendedPromise(): _future(_promise.get_future()){}
-        ExtendedPromise<T> on_success(std::function<void(const T&)> on_success ){
+        ExtendedPromise<T>* on_success(std::function<void(const T&)> on_success ){
             _on_success = std::move(on_success);
             return this;
         }
 
-        ExtendedPromise<T>  set_on_fail(std::function<void(const std::exception&)> callback) {
+        ExtendedPromise<T>*  on_fail(std::function<void(const std::exception&)> callback) {
             _on_fail= std::move(callback);
             return this;
         }
@@ -27,13 +28,19 @@ namespace Basics::ExtendedPromise{
                 std::thread([this, value]() {
                     _on_success(value);
                 }).detach();
+            }else{
+                std::cout << "anull" << std::endl;
             }
         }
-        void fail(const std::exception& ex){
+        void fail(std::exception ex){
             _promise.set_exception(ex);
             std::thread([this, &ex]() {
                 _on_fail(ex);
             }).detach();
+
+        }
+
+        void set_exception(std::exception_ptr exceptionPtr) {
 
         }
 

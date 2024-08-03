@@ -2,5 +2,13 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/fuzzing/libEpollFuzzer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/fuzzing/seed-corpus" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/uSockets" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/uSockets/boringssl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/uSockets/lsquic" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/uSockets/lsquic/src/liblsquic/ls-qpack" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extern/uWebSockets/uSockets/lsquic/src/lshpack" vcs="Git" />
   </component>
 </project>
