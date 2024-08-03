@@ -14,19 +14,23 @@ int calculate_factorial(int n) {
     return n*n ;
 }
 
+void print(int x){
+    std::cout << "result is " << x << std::endl;
+}
+
 TEST(ExtendedPromise , basic) {
 
-    async::AsyncExecutor asyncExecutor;
+    async::AsyncExecutor& executor = async::AsyncExecutor::create();
 
-    auto promise = asyncExecutor.async_executor_submit(calculate_factorial, 10);
+    auto promise = executor.async_executor_submit(calculate_factorial, 100);
 
-    promise->on_success([](int x){
-        std::cout << "result is " << x << std::endl;
+    promise.on_success([](int x){
+        print(x);
     })->on_fail([](const std::exception_ptr ex){
         std::cout << "result is " << std::endl;
     });
 
-    std::cout << promise->_future.get() << std::endl;
-
+    std::cout << promise._future.get() << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 

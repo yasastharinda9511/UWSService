@@ -16,12 +16,36 @@ namespace async{
     class AsyncExecutor{
 
     public:
-        AsyncExecutor() : _task_executors_count(1) , _submit_index(0){
-            initialize_executors(_task_executors_count);
+
+        static AsyncExecutor& create(int task_executor_count = 1){
+            std::call_once(initInstanceFlag, [&]() {
+                instance.reset(new AsyncExecutor(task_executor_count));
+            });
+
+            return  *instance;
         }
 
-        explicit AsyncExecutor(int task_executor_count) : _task_executors_count(task_executor_count), _submit_index(0) {
-            initialize_executors(_task_executors_count);
+        static AsyncExecutor& get_executor() {
+            return *instance;
+        }
+
+        template<typename Func, typename... Args>
+        auto async_executor_submit(Func func, Args&&... args) -> ExtendedPromise<decltype(func(args...))> {
+            using ReturnType = decltype(func(std::forward<Args>(args)...));
+            ExtendedPromise<ReturnType> promise;
+
+            Task t([&promise , func, args...](){
+                try{
+                    ReturnType value = func(args...);
+                    promise.complete(value);
+                }catch(...){
+                    promise.fail(std::current_exception());
+                }
+            });
+
+            auto task_executor = get_next_executor();
+            task_executor->submit(t);
+            return promise;
         }
 
         ~AsyncExecutor(){
@@ -31,26 +55,15 @@ namespace async{
 
         }
 
-        template<typename Func, typename... Args>
-        auto async_executor_submit(Func func, Args&&... args) -> ExtendedPromise<decltype(func(args...))>* {
-            using ReturnType = decltype(func(std::forward<Args>(args)...));
-            auto* promise = new ExtendedPromise<ReturnType>();
+    private:
 
-            Task t([promise , func, args...](){
-                try{
-                    ReturnType value = func(args...);
-                    promise->complete(value);
-                }catch(...){
-                    promise->fail(std::current_exception());
-                }
-            });
-
-            auto task_executor = get_next_executor();
-            task_executor->submit(t);
-            return promise;
+        AsyncExecutor() : _task_executors_count(1) , _submit_index(0){
+            initialize_executors(_task_executors_count);
         }
 
-    private:
+        explicit AsyncExecutor(int task_executor_count) : _task_executors_count(task_executor_count), _submit_index(0) {
+            initialize_executors(_task_executors_count);
+        }
 
         void initialize_executors(int count) {
             for (int i = 0; i < count; ++i) {
@@ -68,6 +81,12 @@ namespace async{
         int32_t _task_executors_count;
         std::atomic<int32_t> _submit_index;
 
+        static std::unique_ptr<AsyncExecutor> instance;
+        static std::once_flag initInstanceFlag;
+
     };
+
+    std::unique_ptr<AsyncExecutor> AsyncExecutor::instance;
+    std::once_flag AsyncExecutor::initInstanceFlag;
 
 }

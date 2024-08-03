@@ -25,17 +25,14 @@ namespace async{
         void complete(const T& value){
             _promise.set_value(value);
             if (_on_success) {
-                std::thread([this, value]() {
-                    _on_success(value);
-                }).detach();
+                _on_success(value);
             }
         }
         void fail(std::exception_ptr ex){
             _promise.set_exception(ex);
-            std::thread([this, &ex]() {
+            if(_on_fail){
                 _on_fail(ex);
-            }).detach();
-
+            }
         }
 
         std::promise<T> _promise;
