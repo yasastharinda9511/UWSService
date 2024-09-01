@@ -28,7 +28,23 @@ TEST(ExtendedPromise , basic) {
         std::cout << "result is " << std::endl;
     });
 
-    std::cout << promise._future.get() << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));
+}
+
+TEST(ExtendedPromise, compose_test){
+
+    async::AsyncExecutor& executor = async::AsyncExecutor::create();
+
+    async::ExtendedPromise<int> promise  = executor.async_executor_submit(square, 100);
+
+    promise.compose([](int x){
+        return x*100;
+    })->compose([](int x){
+        return x*100;
+    })->on_success([](const int & x){
+        std::cout << "last value is "<< x << std::endl;
+    });
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 
