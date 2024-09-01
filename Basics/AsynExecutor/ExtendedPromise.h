@@ -5,7 +5,6 @@
 
 #include <future>
 #include "LockFreeQueue/LockFreeQueue.h"
-#include "AsyncExecutor.h"
 
 namespace async {
 
