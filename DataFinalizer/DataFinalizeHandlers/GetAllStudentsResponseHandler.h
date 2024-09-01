@@ -14,14 +14,18 @@ namespace Finalizer:: ResponseMapHandlers{
         using json = nlohmann::json;
     public:
         std::string handel_response(Basics::BaseTraveller& data_traveller) override {
-
-            const std::vector<Student>& students = data_traveller.get_typed_vector<Student>("response_data");
-            json jsonResponse = json::array();
-            for(auto& student : students){
-                json studentJson = json::parse(student.toJSON());
-                jsonResponse.push_back(studentJson);
+            try{
+                const std::vector<Student>& students = data_traveller.get_typed_vector<Student>("response_data");
+                json jsonResponse = json::array();
+                for(auto& student : students){
+                    json studentJson = json::parse(student.toJSON());
+                    jsonResponse.push_back(studentJson);
+                }
+                return jsonResponse.dump();
+            }catch(std::exception e){
+                return json::array().dump();
             }
-            return jsonResponse.dump();
+
         }
     };
 

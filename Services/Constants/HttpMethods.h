@@ -11,4 +11,5 @@ enum HttpMethods{
     POST,
     PUT,
     OPTIONS,
+    HEAD
 };

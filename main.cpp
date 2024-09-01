@@ -28,15 +28,15 @@ int main() {
     Connectors::DBConnector dbConnector(connection_string, sql_store);
     dbConnector.connect();
     dbConnector.init();
-    Finalizer::DataFinalizer data_dispatcher;
+    uWS::Loop *loop = nullptr;
+
+    Finalizer::DataFinalizer data_dispatcher{loop};
 
     EventBus::EventBus<Basics::BaseTraveller>::get_event_bus()->subscribe(Constants::EventBusStreams::DB_STREAM, std::bind(
             &Connectors::DBConnector::exec, &dbConnector, std::placeholders::_1));
 
     EventBus::EventBus<Basics::BaseTraveller>::get_event_bus()->subscribe(Constants::EventBusStreams::DATA_DISPATCHER_STREAM, std::bind(
             & Finalizer::DataFinalizer::listen, &data_dispatcher, std::placeholders::_1));
-
-    uWS::Loop *loop = nullptr;
 
     std::thread sever_thread([&]() {
         student_service.start(3000);
@@ -45,8 +45,11 @@ int main() {
                 ->add_route(HttpMethods::GET, "/getAllStudents",
                             Controllers::StudentController<false>::get_all_students);
         loop = uWS::Loop::get();
+        data_dispatcher.set_event_loop(loop);
         loop->run();
     });
+
+
 
     Basics::Async::ASyncChain<int> chain;  // Start the chain with an initial value of 100
 
