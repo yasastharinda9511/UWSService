@@ -24,7 +24,7 @@ TEST(ExtendedPromise , basic) {
 
     promise.on_success([](int x){
         print(x);
-    })->on_fail([](const std::exception_ptr ex){
+    })->on_fail([](const std::exception_ptr& ex){
         std::cout << "result is " << std::endl;
     });
 

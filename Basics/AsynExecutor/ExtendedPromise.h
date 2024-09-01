@@ -4,6 +4,7 @@
 #pragma  once
 
 #include <future>
+#include "LockFreeQueue/LockFreeQueue.h"
 
 namespace async{
 
@@ -35,9 +36,11 @@ namespace async{
             }
         }
 
+    private:
         std::promise<T> _promise;
         std::future<T> _future;
         std::function<void(const T&)> _on_success;
         std::function<void(const std::exception_ptr)> _on_fail;
+        lock_free::LockFreeQueue<void(const T&)> _task_queue;
     };
 }
