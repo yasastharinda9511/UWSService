@@ -6,6 +6,7 @@
 #pragma once
 
 #include <atomic>
+#include "../AsyncExceptions/LockFreeQueueEmptyException.h"
 
 namespace async::lock_free {
 
@@ -62,7 +63,7 @@ namespace async::lock_free {
 
                 head_node = _head.load();
                 if (head_node == nullptr) {
-                    return nullptr;
+                    throw Basics::Async::LockFreeQueueEmptyException ();
                 }
 
                 next_node = head_node->next.load();
@@ -85,6 +86,14 @@ namespace async::lock_free {
                     }
                 }
             }
+        }
+
+        bool is_empty(){
+            LockFreeNode *head_node = _head.load();
+            if (head_node == nullptr) {
+                return true;
+            }
+            return false;
         }
 
     private:

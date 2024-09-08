@@ -17,9 +17,8 @@ namespace async{
         TaskExecutor():_running(true){
             async_executor = std::thread([this](){
                 while (_running) {
-                    auto task = this->_task_queue.dequeue();
-                    if(task != nullptr){
-                        task->execute();
+                    if(!_task_queue.is_empty()){
+                        _task_queue.dequeue()->execute();
                     }
                 }
             });

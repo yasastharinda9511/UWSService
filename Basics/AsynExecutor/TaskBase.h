@@ -20,10 +20,10 @@ namespace async{
     class TaskBase{
     public:
         using TaskFunction = std::function<void()>;
-        explicit TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(100){};
+        explicit TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(generate_unique_id()){};
         virtual ~TaskBase()= default;
 
-        TaskStatus get_task_status() const {
+        [[nodiscard]] TaskStatus get_task_status() const {
             return _task_status;  // Atomically get the status
         }
 
@@ -32,7 +32,7 @@ namespace async{
             _task_status = new_status;  // Atomically set the status
         }
 
-        uint64_t get_task_id() const{
+        [[nodiscard]] uint64_t get_task_id() const{
             return _task_id;
         }
 
@@ -43,7 +43,7 @@ namespace async{
         static std::unordered_set<uint64_t> used_ids;
         std::mutex _task_status_lock{};
         TaskStatus _task_status = INITIATE;
-        TaskFunction _task_function;
+        TaskFunction _task_function{};
 
     private:
         static uint64_t generate_unique_id() {
