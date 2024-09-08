@@ -33,27 +33,21 @@ namespace async{
         template<typename Func, typename... Args>
         auto async_executor_submit(Func func, Args&&... args) -> ExtendedPromise<decltype(func(args...))>* {
             using ReturnType = decltype(func(std::forward<Args>(args)...));
-
-            // Create the promise on the heap and manage it correctly
             auto promise = new ExtendedPromise<ReturnType>();
 
-            // Capture promise and function arguments correctly using move semantics and std::forward
             Task* t = new Task([promise, func = std::forward<Func>(func), ...args = std::forward<Args>(args)]() mutable {
                 try {
-                    // Execute the function with forwarded arguments
                     if constexpr (std::is_void_v<ReturnType>) {
-                        func(std::forward<Args>(args)...);  // Call the function
-                        promise->complete();               // Complete the promise with no value (void)
+                        func(std::forward<Args>(args)...);
+                        promise->complete();
                     } else {
-                        ReturnType value = func(std::forward<Args>(args)...);  // Call the function and get return value
-                        promise->complete(value);                             // Complete the promise with the value
+                        ReturnType value = func(std::forward<Args>(args)...);
+                        promise->complete(value);
                     }
                 } catch (...) {
-                    promise->fail(std::current_exception());  // Handle exceptions and fail the promise
+                    promise->fail(std::current_exception());
                 }
             });
-
-            // Submit the task to the executor
             auto task_executor = get_next_executor();
             task_executor->submit(t);
 
