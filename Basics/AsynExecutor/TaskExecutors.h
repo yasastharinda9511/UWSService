@@ -5,8 +5,9 @@
 #pragma once
 
 #include <thread>
+#include <queue>
 #include "LockFreeQueue/LockFreeQueue.h"
-#include "Task.h"
+#include "TaskBase.h"
 
 namespace async{
 
@@ -16,9 +17,9 @@ namespace async{
         TaskExecutor():_running(true){
             async_executor = std::thread([this](){
                 while (_running) {
-                    Task task;
-                    while(this->_task_queue.dequeue(task)){
-                        task.execute();
+                    auto task = this->_task_queue.dequeue();
+                    while(task != nullptr){
+                        task->execute();
                     }
                 }
             });
@@ -31,12 +32,12 @@ namespace async{
             }
         }
 
-        void submit(Task t){
-            _task_queue.enqueue(std::move(t));
+        void submit(TaskBase* t){
+            _task_queue.enqueue(t);
         }
 
     private:
-        lock_free::LockFreeQueue<Task> _task_queue;
+        lock_free::LockFreeQueue<TaskBase*> _task_queue;
         std::atomic<bool> _running;
         std::thread async_executor;
 

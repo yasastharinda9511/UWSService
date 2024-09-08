@@ -6,7 +6,6 @@
 #include <thread>
 #include "ExtendedPromise.h"
 #include "LockFreeQueue/LockFreeQueue.h"
-#include "Task.h"
 #include "TaskExecutors.h"
 
 #pragma once
@@ -34,7 +33,7 @@ namespace async{
             using ReturnType = decltype(func(std::forward<Args>(args)...));
             ExtendedPromise<ReturnType> promise;
 
-            Task t([&promise , func, args...](){
+            TaskBase* t = new TaskBase([&promise , func, args...](){
                 try{
                     ReturnType value = func(args...);
                     promise.complete(value);

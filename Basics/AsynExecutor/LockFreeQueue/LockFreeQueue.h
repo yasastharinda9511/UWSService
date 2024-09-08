@@ -31,7 +31,7 @@ namespace async::lock_free {
 
         void enqueue(T item) {
 
-            auto *new_node = new LockFreeNode(item);
+            auto *new_node = new LockFreeNode(std::move(item));
 
             while (true) {
                 auto tail_node = _tail.load();
@@ -52,7 +52,7 @@ namespace async::lock_free {
             }
         }
 
-        bool dequeue(T &result) {
+        T dequeue() {
 
             LockFreeNode *head_node;
             LockFreeNode *tail_node;
@@ -62,7 +62,7 @@ namespace async::lock_free {
 
                 head_node = _head.load();
                 if (head_node == nullptr) {
-                    return false;
+                    return nullptr;
                 }
 
                 next_node = head_node->next.load();
@@ -70,17 +70,17 @@ namespace async::lock_free {
 
                 if (head_node == _head.load()) {
                     if (next_node == nullptr) {
-                        result = head_node->data;
+                        auto result = head_node->data;
                         if (_tail.compare_exchange_weak(tail_node, nullptr)) {
                             _head.store(nullptr);
                             delete head_node;
-                            return true;
+                            return result;
                         }
                     } else {
-                        result = head_node->data;
+                        auto result = head_node->data;
                         if (_head.compare_exchange_weak(head_node, next_node)) {
                             delete head_node; // Clean up the old head
-                            return true;
+                            return result;
                         }
                     }
                 }

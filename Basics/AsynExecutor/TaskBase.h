@@ -20,19 +20,31 @@ namespace async{
 
     class TaskBase{
     public:
-        TaskBase():_task_id(generate_unique_id()){}
+        using TaskFunction = std::function<void()>;
+        TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(generate_unique_id()){}
+        virtual ~TaskBase()= default;
+
         TaskStatus get_task_status() const {
-            return _task_status.load();  // Atomically get the status
+            return _task_status;  // Atomically get the status
         }
 
         void set_task_status(TaskStatus new_status) {
-            _task_status.store(new_status);  // Atomically set the status
+            std::lock_guard<std::mutex> lock(_task_status_lock);
+            _task_status = new_status;  // Atomically set the status
         }
+
+        uint64_t get_task_id(){
+            return _task_id;
+        }
+
+        virtual void execute();
 
     protected:
         uint64_t _task_id;
         static std::unordered_set<uint64_t> used_ids;
-        std::atomic<TaskStatus> _task_status = INITIATE;
+        std::mutex _task_status_lock{};
+        TaskStatus _task_status = INITIATE;
+        TaskFunction _task_function{};
 
     private:
         uint64_t generate_unique_id() {

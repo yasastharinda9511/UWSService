@@ -13,21 +13,15 @@ namespace async{
 
     class Task:public TaskBase{
     public:
-        using TaskFunction = std::function<void()>;
-        Task() = default;
-        explicit Task(TaskFunction&& task):TaskBase(), _task_function(std::move(task)){
-        };
 
-        auto execute() {
-            if (_task_function && get_task_status() != SUSPENDED){
-                set_task_status(RUNNING);
+        Task() = default;
+        explicit Task(TaskBase task): TaskBase(task){}
+
+        void execute() override {
+            if (_task_function ){
                 _task_function();
-                set_task_status(EXECUTED);
             }
         }
-
-    private:
-        TaskFunction _task_function;
     };
 
 }

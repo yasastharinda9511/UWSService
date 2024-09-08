@@ -20,7 +20,7 @@ TEST(ExtendedPromise , basic) {
 
     async::AsyncExecutor& executor = async::AsyncExecutor::create();
 
-    auto promise = executor.async_executor_submit(square, 100);
+    auto promise = executor.async_executor_submit(square , 100);
 
     promise.on_success([](int x){
         print(x);
