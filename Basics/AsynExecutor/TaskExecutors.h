@@ -7,7 +7,7 @@
 #include <thread>
 #include <queue>
 #include "LockFreeQueue/LockFreeQueue.h"
-#include "TaskBase.h"
+#include "Task.h"
 
 namespace async{
 
@@ -18,7 +18,7 @@ namespace async{
             async_executor = std::thread([this](){
                 while (_running) {
                     auto task = this->_task_queue.dequeue();
-                    while(task != nullptr){
+                    if(task != nullptr){
                         task->execute();
                     }
                 }
@@ -32,12 +32,12 @@ namespace async{
             }
         }
 
-        void submit(TaskBase* t){
+        void submit(Task* t){
             _task_queue.enqueue(t);
         }
 
     private:
-        lock_free::LockFreeQueue<TaskBase*> _task_queue;
+        lock_free::LockFreeQueue<Task*> _task_queue;
         std::atomic<bool> _running;
         std::thread async_executor;
 

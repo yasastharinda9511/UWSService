@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include <cstdint>
 #include <unordered_set>
 #include <random>
@@ -21,7 +20,7 @@ namespace async{
     class TaskBase{
     public:
         using TaskFunction = std::function<void()>;
-        TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(generate_unique_id()){}
+        explicit TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(100){};
         virtual ~TaskBase()= default;
 
         TaskStatus get_task_status() const {
@@ -33,21 +32,21 @@ namespace async{
             _task_status = new_status;  // Atomically set the status
         }
 
-        uint64_t get_task_id(){
+        uint64_t get_task_id() const{
             return _task_id;
         }
 
-        virtual void execute();
+        virtual void execute() = 0;
 
     protected:
         uint64_t _task_id;
         static std::unordered_set<uint64_t> used_ids;
         std::mutex _task_status_lock{};
         TaskStatus _task_status = INITIATE;
-        TaskFunction _task_function{};
+        TaskFunction _task_function;
 
     private:
-        uint64_t generate_unique_id() {
+        static uint64_t generate_unique_id() {
             std::mt19937_64 rng(std::random_device{}());
             std::uniform_int_distribution<uint64_t> dist;
             uint64_t id;
@@ -60,4 +59,5 @@ namespace async{
         }
     };
 
+    std::unordered_set<uint64_t> TaskBase::used_ids;
 }

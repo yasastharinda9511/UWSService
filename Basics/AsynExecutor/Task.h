@@ -13,9 +13,8 @@ namespace async{
 
     class Task:public TaskBase{
     public:
-
-        Task() = default;
-        explicit Task(TaskBase task): TaskBase(task){}
+        ~Task() override = default;
+        explicit Task(TaskFunction&& task): TaskBase(std::move(task)){}
 
         void execute() override {
             if (_task_function ){
