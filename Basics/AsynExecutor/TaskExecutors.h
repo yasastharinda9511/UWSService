@@ -31,12 +31,12 @@ namespace async{
             }
         }
 
-        void submit(Task* t){
+        void submit(TaskBase* t){
             _task_queue.enqueue(t);
         }
 
     private:
-        lock_free::LockFreeQueue<Task*> _task_queue;
+        lock_free::LockFreeQueue<TaskBase*> _task_queue;
         std::atomic<bool> _running;
         std::thread async_executor;
 
