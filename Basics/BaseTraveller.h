@@ -67,7 +67,7 @@ namespace Basics {
         }
 
         void set_error_code(int32_t error_code){_error_code = error_code;}
-        int32_t get_error_code(){return _error_code;}
+        [[nodiscard]] int32_t get_error_code() const{return _error_code;}
 
         void set_error_msg(const std::string& error_message) {_error_message = error_message ;}
         std::string get_error_message(){return  _error_message ;}
