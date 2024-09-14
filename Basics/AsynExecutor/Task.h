@@ -18,7 +18,7 @@ namespace async{
         explicit Task(TaskFunction&& task, ExtendedPromise<T> *task_promise): TaskBase(std::move(task)), _task_promise(task_promise){}
 
         void execute() override {
-            if (this->_task_function){
+            if (this->_task_function && this->get_task_status() != SUSPENDED){
                 this->set_task_status(RUNNING);
                 this->_task_function();
                 this->set_task_status(EXECUTED);
@@ -35,7 +35,7 @@ namespace async{
         }
 
 
-        virtual Task<T>* on_fail(std::function<void(const std::exception_ptr)> callback){
+        virtual Task<T>* on_fail(std::function<void(const std::exception_ptr)>& callback){
             _task_promise->on_fail(callback);
             return this;
         }
