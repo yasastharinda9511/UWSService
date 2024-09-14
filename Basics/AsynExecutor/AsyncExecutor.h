@@ -31,7 +31,7 @@ namespace async{
         }
 
         template<typename Func, typename... Args>
-        auto async_executor_submit(Func func, Args&&... args) -> ExtendedPromise<decltype(func(args...))>* {
+        auto async_executor_submit(Func func, Args&&... args) -> std::pair<ExtendedPromise<decltype(func(args...))>*, TaskBase*> {
             using ReturnType = decltype(func(std::forward<Args>(args)...));
             auto promise = new ExtendedPromise<ReturnType>();
 
@@ -51,7 +51,7 @@ namespace async{
             auto task_executor = get_next_executor();
             task_executor->submit(t);
 
-            return promise;
+            return {promise, t};
         }
 
         ~AsyncExecutor(){

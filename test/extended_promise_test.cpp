@@ -20,7 +20,7 @@ TEST(ExtendedPromise , basic) {
 
     async::AsyncExecutor& executor = async::AsyncExecutor::create();
 
-    auto promise = executor.async_executor_submit(square , 100);
+    auto [promise, _] = executor.async_executor_submit(square , 100);
 
     promise->on_success([](int x){
         print(x);
@@ -35,7 +35,7 @@ TEST(ExtendedPromise, compose_test){
 
     async::AsyncExecutor& executor = async::AsyncExecutor::create();
 
-    async::ExtendedPromise<int> *promise  = executor.async_executor_submit(square, 100);
+    auto [promise, _]= executor.async_executor_submit(square, 100);
 
     promise->compose([](int x){
         return x*100;
