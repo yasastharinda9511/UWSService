@@ -18,8 +18,14 @@ namespace async{
             async_executor = std::thread([this](){
                 while (_running) {
                     if(!_task_queue.is_empty()){
-                        _task_queue.dequeue()->execute();
+                        auto* task = _task_queue.dequeue();
+                        if(task->get_task_status() == SUSPENDED){
+                            _suspended_task_queue.enqueue(task);
+                            continue;
+                        }
+                        task->execute();
                     }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
             });
         }
@@ -37,6 +43,7 @@ namespace async{
 
     private:
         lock_free::LockFreeQueue<TaskBase*> _task_queue;
+        lock_free::LockFreeQueue<TaskBase*> _suspended_task_queue;
         std::atomic<bool> _running;
         std::thread async_executor;
 

@@ -31,11 +31,11 @@ namespace async{
         }
 
         template<typename Func, typename... Args>
-        auto async_executor_submit(Func func, Args&&... args) -> std::pair<ExtendedPromise<decltype(func(args...))>*, TaskBase*> {
+        auto async_executor_submit(Func func, Args&&... args) -> Task<decltype(func(args...))>* {
             using ReturnType = decltype(func(std::forward<Args>(args)...));
             auto promise = new ExtendedPromise<ReturnType>();
 
-            Task* t = new Task([promise, func = std::forward<Func>(func), ...args = std::forward<Args>(args)]() mutable {
+            Task<ReturnType>* t = new Task([promise, func = std::forward<Func>(func), ...args = std::forward<Args>(args)]() mutable {
                 try {
                     if constexpr (std::is_void_v<ReturnType>) {
                         func(std::forward<Args>(args)...);
@@ -47,11 +47,10 @@ namespace async{
                 } catch (...) {
                     promise->fail(std::current_exception());
                 }
-            });
+            } ,promise);
             auto task_executor = get_next_executor();
             task_executor->submit(t);
-
-            return {promise, t};
+            return t;
         }
 
         ~AsyncExecutor(){

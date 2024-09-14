@@ -8,56 +8,44 @@
 #include <unordered_set>
 #include <random>
 
-namespace async{
-
-    enum TaskStatus{
+namespace async {
+    using TaskFunction = std::function<void()>;
+    enum TaskStatus {
         INITIATE,
         RUNNING,
+        RESUME,
         SUSPENDED,
         EXECUTED
     };
 
-    class TaskBase{
+    class TaskBase {
     public:
-        using TaskFunction = std::function<void()>;
-        explicit TaskBase(TaskFunction&& task):_task_function(std::move(task)), _task_id(generate_unique_id()){};
-        virtual ~TaskBase()= default;
+        explicit TaskBase(TaskFunction &&task) : _task_function(std::move(task)) {};
+
+        virtual ~TaskBase() = default;
 
         [[nodiscard]] TaskStatus get_task_status() const {
             return _task_status;  // Atomically get the status
         }
 
-        void set_task_status(TaskStatus new_status) {
-            std::lock_guard<std::mutex> lock(_task_status_lock);
-            _task_status = new_status;  // Atomically set the status
+        void suspend() {
+            set_task_status(SUSPENDED);
         }
 
-        [[nodiscard]] uint64_t get_task_id() const{
-            return _task_id;
+        void resume() {
+            set_task_status(RESUME);
         }
 
         virtual void execute() = 0;
 
     protected:
-        uint64_t _task_id;
-        static std::unordered_set<uint64_t> used_ids;
+        void set_task_status(TaskStatus new_status) {
+            std::lock_guard<std::mutex> lock(_task_status_lock);
+            _task_status = new_status;  // Atomically set the status
+        }
+
         std::mutex _task_status_lock{};
         TaskStatus _task_status = INITIATE;
         TaskFunction _task_function{};
-
-    private:
-        static uint64_t generate_unique_id() {
-            std::mt19937_64 rng(std::random_device{}());
-            std::uniform_int_distribution<uint64_t> dist;
-            uint64_t id;
-            do {
-                id = dist(rng);
-            } while (used_ids.find(id) != used_ids.end());
-
-            used_ids.insert(id);
-            return id;
-        }
     };
-
-    std::unordered_set<uint64_t> TaskBase::used_ids;
 }
