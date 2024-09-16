@@ -35,11 +35,10 @@ namespace async{
         }
 
 
-        virtual Task<T>* on_fail(std::function<void(const std::exception_ptr)>& callback){
+        virtual Task<T>* on_fail(std::function<void(const std::exception_ptr)> callback){
             _task_promise->on_fail(callback);
             return this;
         }
-
 
     private:
         ExtendedPromise<T> *_task_promise{};

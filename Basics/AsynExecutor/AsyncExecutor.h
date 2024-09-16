@@ -11,6 +11,7 @@
 #include "LockFreeQueue/LockFreeQueue.h"
 #include "TaskExecutors.h"
 #include "Task.h"
+#include "TimeOutChecker.h"
 
 namespace async{
 
@@ -72,7 +73,8 @@ namespace async{
 
         void initialize_executors(int count) {
             for (int i = 0; i < count; ++i) {
-                auto* task_executor = new TaskExecutor();
+                auto* timeout_checker = new TimeoutChecker();
+                auto* task_executor = new TaskExecutor(i, timeout_checker);
                 _task_executors.try_emplace(i, task_executor);
             }
         }
