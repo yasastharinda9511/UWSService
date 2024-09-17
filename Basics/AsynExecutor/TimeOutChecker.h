@@ -47,7 +47,6 @@ namespace async {
                 std::lock_guard<std::mutex> lock(_timout_queue_access);
                 for (auto it = _timeout_queue.begin(); it != _timeout_queue.end();) {
                     if (it->second->is_time_out(current_time)) {
-                        std::cout << "time out occurred" << std::endl;
                         it = _timeout_queue.erase(it); // Remove the timed-out task
                     } else {
                         ++it;
